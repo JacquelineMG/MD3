@@ -1,3 +1,15 @@
+const greeting = name => {
+  return `Hello, ${name}. How are you today?`;
+};
+
+console.log(greeting("Sunshine"));
+
+// const arr = [1,2,3,4,5];
+
+// const [first, second] = arr;
+
+// console.log(first);
+
 // const map = [1,2,3].map((x) => {
 //   const y = x + 1;
 //   return x * y;
