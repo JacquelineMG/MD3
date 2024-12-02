@@ -2,7 +2,16 @@ const http = require('http');
 const PORT = 8080;
 
 const requestHandler = (request, response) => {
-  const responseText = `Requested Path: ${request.url}\nRequest Method: ${request.method}`;
+  let responseText = ``;
+  if (request.url === "/") {
+    responseText = "Welcome!";
+  } else if (request.url === "/urls") {
+    responseText = `www.google.ca\nwww.google.com\nwww.example.com`;
+  } else {
+    response.statusCode = 404;
+    responseText = `404 Page Not Found`;
+  }
+
   response.end(responseText);
 };
 
