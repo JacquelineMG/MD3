@@ -51,8 +51,12 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send("OK");
+  const newID = generateRandomString();
+  urlDatabase[newID] = req.body.longURL;
+  console.log(urlDatabase);
+
+  const templateVars = { id: newID };
+  res.redirect("/urls");
 });
 
 
