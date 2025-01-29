@@ -65,7 +65,6 @@ app.get("/urls/:id", (req, res) => {
 app.post("/urls", (req, res) => {
   const newID = generateRandomString();
   urlDatabase[newID] = req.body.longURL;
-
   res.redirect(`/urls/${newID}`);
 });
 
@@ -92,6 +91,14 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   res.clearCookie("username");
   res.redirect("urls");
+});
+
+app.get("/register", (req, res) => {
+  const templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase
+  };
+  res.render("register", templateVars);
 });
 
 app.listen(PORT, () => {
