@@ -10,6 +10,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 
+const user = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
+};
+
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
@@ -99,6 +112,10 @@ app.get("/register", (req, res) => {
     urls: urlDatabase
   };
   res.render("register", templateVars);
+});
+
+app.post("/register", (req, res) => {
+
 });
 
 app.listen(PORT, () => {
