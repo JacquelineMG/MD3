@@ -1,53 +1,33 @@
-const greeting = name => {
-  return `Hello, ${name}. How are you today?`;
+const userOb = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
+  "2nc2dz": {
+    id: "2nc2dz",
+    email: "test@email.com",
+    password: "TopSecret"
+  },
 };
 
-console.log(greeting("Sunshine"));
+const userLookup = (email) => {
+  const userIds = Object.keys(userOb);
+  let userInfo = null;
 
-// const arr = [1,2,3,4,5];
+  for (const id of userIds) {
+    if (userOb[id].email === email) {
+      userInfo = userOb[id];
+    }
+  }
+  return userInfo;
+};
 
-// const [first, second] = arr;
+console.log(userLookup("test@email.com"));
+console.log(userLookup("user2@examle.com"));
 
-// console.log(first);
-
-// const map = [1,2,3].map((x) => {
-//   const y = x + 1;
-//   return x * y;
-// });
-
-// console.log(map);
-
-// const arrLike = {0: "aaa", 1: "bbb", 2: "ccc"};
-
-// arrLike.length = Object.keys(arrLike).length;
-// console.log(arrLike);
-
-// const arr = Array.from(arrLike);
-
-// console.log(arr);
-
-
-// const a = [1,2];
-// const b = a;
-
-// console.log(a);
-// console.log(b);
-
-// { let c = 1;
-//   const d = 2;
-//   var e = 3;
-// }
-
-// console.log(c);
-// console.log(d);
-// console.log(e);
-
-// const items = [1,2,3,4,5];
-
-// const itemsCopy1 = [];
-
-// for (let i = 0; i < items.length; i += 1) {
-//   itemsCopy1[i] = items[i];
-// }
-
-// const itemsCopy2 = [...items];
