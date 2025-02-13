@@ -117,10 +117,22 @@ app.post("/urls/:id", (req, res) => {
   res.redirect("/urls");
 });
 
-///////////////////////////////////
+
 app.post("/login", (req, res) => {
-  res.cookie("user_id", req.body.username);
-  res.redirect("urls");
+  const email = req.body.email;
+  const userOb = userLookup(email);
+  
+  if (userOb === null) {
+    res.status(403).send("Sorry! Wrong email or password.");
+  } else if (userOb !== null && req.body.password !== userOb.password) {
+    res.status(403).send("Sorry! Wrong email or password.");
+  } else if (userOb !== null && req.body.password === userOb.password) {
+    res.cookie("user_id", userOb.id);
+    res.redirect("/urls");
+  } else {
+    res.status(400).send("Sorry! Bad request.");
+  }
+
 });
 
 app.post("/logout", (req, res) => {
@@ -162,7 +174,7 @@ app.post("/register", (req, res) => {
     res.redirect("/urls");
 
   } else {
-    res.status(400).send("Sorry! That email is already registered");
+    res.status(400).send("Sorry! That email is already registered.");
   }
 
 });
