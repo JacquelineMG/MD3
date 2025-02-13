@@ -140,15 +140,22 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   const randomID = generateRandomString();
+  const email = req.body.email;
 
-  userOb[randomID] = {
-    id: randomID,
-    email: req.body.email,
-    password: req.body.password,
-  };
+  if (userLookup(email) === null) {
+    userOb[randomID] = {
+      id: randomID,
+      email: req.body.email,
+      password: req.body.password,
+    };
 
-  res.cookie("user_id", randomID);
-  res.redirect("/urls");
+    res.cookie("user_id", randomID);
+    res.redirect("/urls");
+    
+  } else {
+    res.status(400).send("Sorry! That email is already registered");
+  }
+
 });
 
 app.listen(PORT, () => {
