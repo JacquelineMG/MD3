@@ -128,6 +128,15 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls");
 });
 
+app.get("/login", (req, res) => {
+  const templateVars = {
+    user: userOb,
+    userId: req.cookies["user_id"],
+    urls: urlDatabase
+  };
+  res.render("login", templateVars);
+});
+
 app.get("/register", (req, res) => {
   const templateVars = {
     user: userOb,
@@ -151,7 +160,7 @@ app.post("/register", (req, res) => {
 
     res.cookie("user_id", randomID);
     res.redirect("/urls");
-    
+
   } else {
     res.status(400).send("Sorry! That email is already registered");
   }
