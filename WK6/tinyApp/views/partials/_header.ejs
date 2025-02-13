@@ -23,7 +23,7 @@
         <% if(userId) { %>
           Logged in as: <%= user[userId].email %> 
 
-          <form style="margin: 1em" class="form-inline" action="/logout" method="POST">
+          <form style="margin-inline: 0.5em" class="form-inline" action="/logout" method="POST">
             <button type="submit" class="btn btn-primary">Logout</button>
           </form>
 
@@ -31,16 +31,8 @@
       </div>
 
       <% if(!userId) { %>
-      <form class="form-inline" action="/login" method="POST">
-        <input
-          class="form-control"
-          type="text"
-          name="username"
-          style="width: 200px; margin: 1em"
-          placeholder="Enter Username"
-        />
-        <button type="submit" class="btn btn-primary">Login</button>
-      </form>
+        <a href="/login" class="btn btn-primary" style="margin-inline: 0.5em">Login</a>
+        <a href="/register" class="btn btn-primary"style="margin-inline: 0.5em">Register</a>
       <% } %>
     </div>
   </nav>
