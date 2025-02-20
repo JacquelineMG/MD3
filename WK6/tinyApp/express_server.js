@@ -141,12 +141,17 @@ app.post("/logout", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  const templateVars = {
-    user: userOb,
-    userId: req.cookies["user_id"],
-    urls: urlDatabase
-  };
-  res.render("login", templateVars);
+
+  if (req.cookies["user_id"]) {
+    res.redirect("/urls");
+  } else {
+    const templateVars = {
+      user: userOb,
+      userId: req.cookies["user_id"],
+      urls: urlDatabase
+    };
+    res.render("login", templateVars);
+  }
 });
 
 app.get("/register", (req, res) => {
