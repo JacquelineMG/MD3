@@ -45,7 +45,7 @@ const generateRandomString = () => {
   return id;
 };
 
-const userLookup = (email) => {
+const userLookup = email => {
   const userIds = Object.keys(userOb);
   let userInfo = null;
 
@@ -55,6 +55,16 @@ const userLookup = (email) => {
     }
   }
   return userInfo;
+};
+
+const checkDatabase = id => {
+  let check = null;
+  for (const data in urlDatabase) {
+    if (data === id) {
+      check = data;
+    }
+  }
+  return check;
 };
 
 app.get("/", (req, res) => {
@@ -79,14 +89,31 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = {
-    user: userOb,
-    userId: req.cookies["user_id"],
-  };
-  res.render("urls_new.ejs", templateVars);
+  if (!req.cookies["user_id"]) {
+    res.redirect("/login");
+  } else {
+    const templateVars = {
+      user: userOb,
+      userId: req.cookies["user_id"],
+    };
+    res.render("urls_new.ejs", templateVars);
+  }
 });
 
 app.get("/urls/:id", (req, res) => {
+
+  if (checkDatabase(req.params.id) === null) {
+    res.status(404).send("Sorry! Can't find that tiny URL.");
+  } else {
+    const templateVars = {
+      id: req.params.id,
+      longURL: urlDatabase[req.params.id],
+      user: userOb,
+      userId: req.cookies["user_id"],
+    };
+    res.render("urls_show", templateVars);
+  }
+
   const templateVars = {
     id: req.params.id,
     longURL: urlDatabase[req.params.id],
@@ -97,9 +124,13 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  const newID = generateRandomString();
-  urlDatabase[newID] = req.body.longURL;
-  res.redirect(`/urls/${newID}`);
+  if (!req.cookies["user_id"]) {
+    res.status(400).send("Sorry! You need to login first.");
+  } else {
+    const newID = generateRandomString();
+    urlDatabase[newID] = req.body.longURL;
+    res.redirect(`/urls/${newID}`);
+  }
 });
 
 app.get("/u/:id", (req, res) => {
@@ -141,28 +172,28 @@ app.post("/logout", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  if (req.cookies["user_id"]) {
-    res.redirect("/urls");
-  } else {
+  if (!req.cookies["user_id"]) {
     const templateVars = {
       user: userOb,
       userId: req.cookies["user_id"],
       urls: urlDatabase
     };
     res.render("login", templateVars);
+  } else {
+    res.redirect("/urls");
   }
 });
 
 app.get("/register", (req, res) => {
-  if (req.cookies["user_id"]) {
-    res.redirect("/urls");
-  } else {
+  if (!req.cookies["user_id"]) {
     const templateVars = {
       user: userOb,
       userId: req.cookies["user_id"],
       urls: urlDatabase
     };
     res.render("register", templateVars);
+  } else {
+    res.redirect("/urls");
   }
 });
 
