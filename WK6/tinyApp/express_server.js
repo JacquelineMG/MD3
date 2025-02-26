@@ -113,14 +113,6 @@ app.get("/urls/:id", (req, res) => {
     };
     res.render("urls_show", templateVars);
   }
-
-  const templateVars = {
-    id: req.params.id,
-    longURL: urlDatabase[req.params.id],
-    user: userOb,
-    userId: req.cookies["user_id"],
-  };
-  res.render("urls_show", templateVars);
 });
 
 app.post("/urls", (req, res) => {
