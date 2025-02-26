@@ -29,11 +29,6 @@ const userOb = {
   },
 };
 
-// const urlDatabase = {
-//   b2xVn2: "http://www.lighthouselabs.ca",
-//   "9sm5xK": "http://www.google.com",
-// };
-
 const urlDatabase = {
   b2xVn2: {
     longURL: "http://www.lighthouselabs.ca",
@@ -98,6 +93,7 @@ app.get("/urls", (req, res) => {
     urls: urlDatabase
   };
   res.render("urls_index", templateVars);
+  
 });
 
 app.get("/urls/new", (req, res) => {
