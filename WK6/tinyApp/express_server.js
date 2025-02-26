@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 const { Template } = require("ejs");
 const express = require("express");
 const app = express();
@@ -28,9 +29,20 @@ const userOb = {
   },
 };
 
+// const urlDatabase = {
+//   b2xVn2: "http://www.lighthouselabs.ca",
+//   "9sm5xK": "http://www.google.com",
+// };
+
 const urlDatabase = {
-  b2xVn2: "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+  b2xVn2: {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "2nc2dz",
+  },
+  "9sm5xK": {
+    longURL: "http://www.google.com",
+    userID: "2nc2dz",
+  },
 };
 
 ///// HELPER FUNCTIONS /////
@@ -107,7 +119,7 @@ app.get("/urls/:id", (req, res) => {
   } else {
     const templateVars = {
       id: req.params.id,
-      longURL: urlDatabase[req.params.id],
+      longURL: urlDatabase[req.params.id].longURL,
       user: userOb,
       userId: req.cookies["user_id"],
     };
@@ -120,13 +132,16 @@ app.post("/urls", (req, res) => {
     res.status(400).send("Sorry! You need to login first.");
   } else {
     const newID = generateRandomString();
-    urlDatabase[newID] = req.body.longURL;
+    urlDatabase[newID] = {
+      longURL: req.body.longURL,
+      userID: req.cookies["user_id"],
+    };
     res.redirect(`/urls/${newID}`);
   }
 });
 
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id];
+  const longURL = urlDatabase[req.params.id].longURL;
   res.redirect(longURL);
 });
 
