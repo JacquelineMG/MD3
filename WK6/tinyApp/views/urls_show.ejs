@@ -13,6 +13,14 @@
 
   <body>
     <%- include("partials/_header.ejs") %>
+
+    <% if(!userId) { %>
+      <main style="margin: 1em;">
+      <h6> Please login to see this page.</h6>
+      </main>
+    <% } %>
+
+    <% if(userId) { %>
     <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
@@ -40,6 +48,7 @@
           </form>
       </div>
     </div>
+    <% } %>
 
 
 

@@ -18,13 +18,6 @@
   <body>
     <%- include("partials/_header.ejs") %>
 
-    <% if(!userId) { %>
-      <main style="margin: 1em;">
-      <h6> Please login to see this page.</h6>
-      </main>
-    <% } %>
-
-    <% if(userId) { %>
     <main style="margin: 1em;">
       <h3>My URLs</h3>
       <table class="table">
@@ -53,7 +46,7 @@
               </td>
             </tr>
           <% } %>
-      <% } %>
+
         </tbody>
       </table>
     </main>

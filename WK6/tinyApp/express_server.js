@@ -27,6 +27,11 @@ const userOb = {
     email: "test@email.com",
     password: "TopSecret"
   },
+  trialID: {
+    id: "trialID",
+    email: "email@email.com",
+    password: "123"
+  },
 };
 
 const urlDatabase = {
@@ -37,6 +42,10 @@ const urlDatabase = {
   "9sm5xK": {
     longURL: "http://www.google.com",
     userID: "2nc2dz",
+  },
+  d8s45f: {
+    longURL: "https://example.com/",
+    userID: "trialID",
   },
 };
 
@@ -64,15 +73,27 @@ const userLookup = email => {
   return userInfo;
 };
 
-const checkDatabase = id => {
+const checkDatabase = (id, database) => {
   let check = null;
-  for (const data in urlDatabase) {
+  for (const data in database) {
     if (data === id) {
       check = data;
     }
   }
   return check;
 };
+
+const getUsersURLS = ID => {
+  let userURLS = {};
+  for (const ob in urlDatabase) {
+    if (urlDatabase[ob].userID === ID) {
+      userURLS[ob] = urlDatabase[ob];
+    }
+  }
+  return userURLS;
+};
+
+/////////////////////////////////////////////////////////
 
 app.get("/", (req, res) => {
   res.send("Howdy!");
@@ -87,13 +108,17 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = {
-    user: userOb,
-    userId: req.cookies["user_id"],
-    urls: urlDatabase
-  };
-  res.render("urls_index", templateVars);
-  
+  if (!req.cookies["user_id"]) {
+    res.redirect("/login");
+  } else {
+    const userURLS = getUsersURLS(req.cookies["user_id"]);
+    const templateVars = {
+      user: userOb,
+      userId: req.cookies["user_id"],
+      urls: userURLS
+    };
+    res.render("urls_index", templateVars); 
+  }
 });
 
 app.get("/urls/new", (req, res) => {
@@ -109,8 +134,12 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
+  const userURLS = getUsersURLS(req.cookies["user_id"]);
+  const id = req.params.id;
 
-  if (checkDatabase(req.params.id) === null) {
+  if (!req.cookies["user_id"]) {
+    res.redirect("/login");
+  } else if (checkDatabase(id, userURLS) === null) {
     res.status(404).send("Sorry! Can't find that tiny URL.");
   } else {
     const templateVars = {
