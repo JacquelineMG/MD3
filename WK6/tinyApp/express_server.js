@@ -117,7 +117,7 @@ app.get("/urls", (req, res) => {
       userId: req.cookies["user_id"],
       urls: userURLS
     };
-    res.render("urls_index", templateVars); 
+    res.render("urls_index", templateVars);
   }
 });
 
@@ -171,8 +171,17 @@ app.get("/u/:id", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id];
-  res.redirect("/urls");
+  const userURLS = getUsersURLS(req.cookies["user_id"]);
+  const id = req.params.id;
+
+  if (!req.cookies["user_id"]) {
+    res.status(403).send("Sorry! You can't delete that");
+  } else if (checkDatabase(id, userURLS) === null) {
+    res.status(403).send("Sorry! You can't delete that");
+  } else {
+    delete urlDatabase[req.params.id];
+    res.redirect("/urls");
+  }
 });
 
 app.post("/urls/:id", (req, res) => {
