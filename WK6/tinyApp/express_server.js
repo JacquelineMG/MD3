@@ -3,13 +3,20 @@ const { Template } = require("ejs");
 const express = require("express");
 const app = express();
 const PORT = 8080;
-const cookieParser = require("cookie-parser");
+// const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
 
 app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+// app.use(cookieParser());
+
+app.use(cookieSession({
+  name: "session",
+  keys: ["key1"],
+  maxAge: 24 * 60 * 60 * 1000
+}));
 
 
 const userOb = {
@@ -109,13 +116,13 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     res.redirect("/login");
   } else {
     const userURLS = getUsersURLS(req.cookies["user_id"]);
     const templateVars = {
       user: userOb,
-      userId: req.cookies["user_id"],
+      userId: req.session.user_id,
       urls: userURLS
     };
     res.render("urls_index", templateVars);
@@ -123,22 +130,22 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     res.redirect("/login");
   } else {
     const templateVars = {
       user: userOb,
-      userId: req.cookies["user_id"],
+      userId: req.session.user_id,
     };
     res.render("urls_new.ejs", templateVars);
   }
 });
 
 app.get("/urls/:id", (req, res) => {
-  const userURLS = getUsersURLS(req.cookies["user_id"]);
+  const userURLS = getUsersURLS(req.session.user_id);
   const id = req.params.id;
 
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     res.redirect("/login");
   } else if (checkDatabase(id, userURLS) === null) {
     res.status(404).send("Sorry! Can't find that tiny URL.");
@@ -154,13 +161,13 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     res.status(400).send("Sorry! You need to login first.");
   } else {
     const newID = generateRandomString();
     urlDatabase[newID] = {
       longURL: req.body.longURL,
-      userID: req.cookies["user_id"],
+      userID: req.session.user_id,
     };
     res.redirect(`/urls/${newID}`);
   }
@@ -172,10 +179,10 @@ app.get("/u/:id", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
-  const userURLS = getUsersURLS(req.cookies["user_id"]);
+  const userURLS = getUsersURLS(req.session.user_id);
   const id = req.params.id;
 
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     res.status(403).send("Sorry! You can't delete that");
   } else if (checkDatabase(id, userURLS) === null) {
     res.status(403).send("Sorry! You can't delete that");
@@ -206,7 +213,7 @@ app.post("/login", (req, res) => {
     if (passwordCheck === false) {
       res.status(403).send("Sorry! Wrong email or password.");
     } else if (passwordCheck === true) {
-      res.cookie("user_id", userOb.id);
+      req.session.user_id = userOb.id;
       res.redirect("/urls");
     } else {
       res.status(400).send("Sorry! Bad request.");
@@ -215,15 +222,15 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id");
+  res.session = null;
   res.redirect("/login");
 });
 
 app.get("/login", (req, res) => {
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     const templateVars = {
       user: userOb,
-      userId: req.cookies["user_id"],
+      userId: req.session.user_id,
       urls: urlDatabase
     };
     res.render("login", templateVars);
@@ -233,10 +240,10 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     const templateVars = {
       user: userOb,
-      userId: req.cookies["user_id"],
+      userId: req.session.user_id,
       urls: urlDatabase
     };
     res.render("register", templateVars);
@@ -257,7 +264,7 @@ app.post("/register", (req, res) => {
       email: req.body.email,
       password: hashedPassword,
     };
-    res.cookie("user_id", randomID);
+    req.session.user_id = randomID;
     res.redirect("/urls");
   } else {
     res.status(400).send("Sorry! That email is already registered.");
