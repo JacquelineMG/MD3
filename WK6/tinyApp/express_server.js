@@ -195,20 +195,23 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const userOb = userLookup(email);
   const password = req.body.password;
-  //const hashedPassword = bcrypt.hashSync(password, 10);
-  const passwordCheck = bcrypt.compareSync(password, userOb.password);
-  
+  let passwordCheck = false;
+
   if (userOb === null) {
     res.status(403).send("Sorry! Wrong email or password.");
-  } else if (userOb !== null && passwordCheck === false) {
-    res.status(403).send("Sorry! Wrong email or password.");
-  } else if (userOb !== null && passwordCheck === true) {
-    res.cookie("user_id", userOb.id);
-    res.redirect("/urls");
   } else {
-    res.status(400).send("Sorry! Bad request.");
+    if (userOb) {
+      passwordCheck = bcrypt.compareSync(password, userOb.password);
+    }
+    if (passwordCheck === false) {
+      res.status(403).send("Sorry! Wrong email or password.");
+    } else if (passwordCheck === true) {
+      res.cookie("user_id", userOb.id);
+      res.redirect("/urls");
+    } else {
+      res.status(400).send("Sorry! Bad request.");
+    }
   }
-
 });
 
 app.post("/logout", (req, res) => {
@@ -255,7 +258,6 @@ app.post("/register", (req, res) => {
       password: hashedPassword,
     };
     res.cookie("user_id", randomID);
-    console.log(userOb);
     res.redirect("/urls");
   } else {
     res.status(400).send("Sorry! That email is already registered.");
