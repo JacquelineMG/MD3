@@ -47,14 +47,6 @@ const urlDatabase = {
     longURL: "http://www.lighthouselabs.ca",
     userID: "2nc2dz",
   },
-  "9sm5xK": {
-    longURL: "http://www.google.com",
-    userID: "2nc2dz",
-  },
-  d8s45f: {
-    longURL: "https://example.com/",
-    userID: "trialID",
-  },
 };
 
 ///// HELPER FUNCTIONS /////
@@ -193,7 +185,20 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
-  urlDatabase[req.params.id] = req.body.newURL;
+  const id = req.params.id;
+  const longURL = req.body.newURL;
+  const userID = req.session.userId;
+
+  if (!userID) {
+    res.status(401).send("Please login first!");
+  } else if (userID !== urlDatabase[id].userID) {
+    res.status(401).send("Sorry, that's not your URL");
+  } else {
+    urlDatabase[id] = {
+      longURL,
+      userID
+    };
+  }
   res.redirect("/urls");
 });
 
