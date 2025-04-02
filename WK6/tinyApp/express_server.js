@@ -18,38 +18,7 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000
 }));
 
-
-const userOb = {
-  userRandomID: {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur",
-  },
-  user2RandomID: {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk",
-  },
-  "2nc2dz": {
-    id: "2nc2dz",
-    email: "test@email.com",
-    password: "TopSecret"
-  },
-  trialID: {
-    id: "trialID",
-    email: "email@email.com",
-    password: "123"
-  },
-};
-
-const urlDatabase = {
-  b2xVn2: {
-    longURL: "http://www.lighthouselabs.ca",
-    userID: "2nc2dz",
-  },
-};
-
-///// HELPER FUNCTIONS /////
+///// TINYAPP HELPER FUNCTIONS /////
 const generateRandomString = () => {
   const alphanums = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", 1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
   let id = "";
@@ -83,17 +52,48 @@ const checkDatabase = (id, database) => {
   return check;
 };
 
-const getUsersURLS = ID => {
+const getUsersURLS = (id) => {
   let userURLS = {};
   for (const ob in urlDatabase) {
-    if (urlDatabase[ob].userID === ID) {
+    if (urlDatabase[ob].userID === id) {
       userURLS[ob] = urlDatabase[ob];
     }
   }
   return userURLS;
 };
 
-/////////////////////////////////////////////////////////
+
+
+const userOb = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
+  "2nc2dz": {
+    id: "2nc2dz",
+    email: "test@email.com",
+    password: "TopSecret"
+  },
+  trialID: {
+    id: "trialID",
+    email: "email@email.com",
+    password: "123"
+  },
+};
+
+const urlDatabase = {
+  b2xVn2: {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "2nc2dz",
+  },
+};
+
 
 app.get("/", (req, res) => {
   res.send("Howdy!");
