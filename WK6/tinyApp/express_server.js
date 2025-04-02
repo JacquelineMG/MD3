@@ -61,13 +61,13 @@ const generateRandomString = () => {
   return id;
 };
 
-const userLookup = email => {
-  const userIds = Object.keys(userOb);
+const userLookup = (email, database) => {
+  const userIds = Object.keys(database);
   let userInfo = null;
 
   for (const id of userIds) {
-    if (userOb[id].email === email) {
-      userInfo = userOb[id];
+    if (database[id].email === email) {
+      userInfo = database[id];
     }
   }
   return userInfo;
@@ -205,20 +205,20 @@ app.post("/urls/:id", (req, res) => {
 
 app.post("/login", (req, res) => {
   const email = req.body.email;
-  const userOb = userLookup(email);
+  const userInfo = userLookup(email, userOb);
   const password = req.body.password;
   let passwordCheck = false;
 
-  if (userOb === null) {
+  if (userInfo === null) {
     res.status(403).send("Sorry! Wrong email or password.");
   } else {
-    if (userOb) {
-      passwordCheck = bcrypt.compareSync(password, userOb.password);
+    if (userInfo) {
+      passwordCheck = bcrypt.compareSync(password, userInfo.password);
     }
     if (passwordCheck === false) {
       res.status(403).send("Sorry! Wrong email or password.");
     } else if (passwordCheck === true) {
-      req.session.userId = userOb.id;
+      req.session.userId = userInfo.id;
       res.redirect("/urls");
     } else {
       res.status(400).send("Sorry! Bad request.");
@@ -263,7 +263,7 @@ app.post("/register", (req, res) => {
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
 
-  if (userLookup(email) === null) {
+  if (userLookup(email, userOb) === null) {
     userOb[randomID] = {
       id: randomID,
       email: req.body.email,
